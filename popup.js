@@ -1,4 +1,4 @@
-// Referencias de Elementos de Interfaz
+
 const btnRegresar = document.getElementById('btn-regresar-menu');
 const appTitulo = document.getElementById('app-titulo');
 const appSubtitulo = document.getElementById('app-subtitulo');
@@ -12,12 +12,11 @@ const txtCursoTitulo = document.getElementById('txt-curso-titulo');
 const estadoIndex = document.getElementById('estado-index');
 const contenedorLista = document.getElementById('lista-videos-descarga');
 
-// Variable global para rastrear el historial de navegación interno
+
 let vistaAnterior = 'menu';
 
-// Cambiar de vista de forma elegante
 function navegarA(vista) {
-    // Ocultar todas las vistas
+ 
     viewMenu.classList.remove('active-view');
     viewGaleria.classList.remove('active-view');
     viewClases.classList.remove('active-view');
@@ -34,7 +33,7 @@ function navegarA(vista) {
         appSubtitulo.innerText = "Select a course to view its syllabus.";
         btnRegresar.style.display = 'block';
         viewGaleria.classList.add('active-view');
-        vistaAnterior = 'menu'; // Si regresas desde galería, vas al menú principal
+        vistaAnterior = 'menu'; 
     } 
     else if (vista === 'clases') {
         appTitulo.innerText = "📥 Videos";
@@ -44,14 +43,12 @@ function navegarA(vista) {
     }
 }
 
-// Evento para el botón global de Regresar
+
 btnRegresar.addEventListener('click', () => {
     navegarA(vistaAnterior);
 });
 
-// =========================================================================
-// ACCIÓN A: INICIAR MODO GALERÍA COMPLETA
-// =========================================================================
+
 document.getElementById('btn-galeria').addEventListener('click', async () => {
     gridCursos.innerHTML = "<p style='text-align:center; font-size:12px; color:#6a6f73; padding:20px;'>⏳ Synchronizing...</p>";
     navegarA('galeria');
@@ -80,7 +77,7 @@ document.getElementById('btn-galeria').addEventListener('click', async () => {
             `;
 
             card.addEventListener('click', () => {
-                vistaAnterior = 'galeria'; // Si regresas desde clases, vuelve al catálogo
+                vistaAnterior = 'galeria'; 
                 mapearTemarioCurso(curso.id, curso.title);
             });
             gridCursos.appendChild(card);
@@ -91,9 +88,7 @@ document.getElementById('btn-galeria').addEventListener('click', async () => {
     }
 });
 
-// =========================================================================
-// ACCIÓN B: INICIAR MODO PESTAÑA ACTIVA
-// =========================================================================
+
 document.getElementById('btn-pagina').addEventListener('click', async () => {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: false });
     const tab = tabs.find(t => t.url && t.url.includes("udemy.com/course/"));
@@ -111,7 +106,7 @@ document.getElementById('btn-pagina').addEventListener('click', async () => {
         return;
     }
 
-    vistaAnterior = 'menu'; // Si regresas desde clases aquí, vas directo al menú principal
+    vistaAnterior = 'menu';
     navegarA('clases');
     
     estadoIndex.innerText = "🔍 Searching for the ID of the active course...";
@@ -129,9 +124,7 @@ document.getElementById('btn-pagina').addEventListener('click', async () => {
     }
 });
 
-// =========================================================================
-// MOTOR COMÚN REUTILIZABLE: MAPEO Y EXTRACCIÓN BINARIA MULTIMEDIA
-// =========================================================================
+
 async function mapearTemarioCurso(courseId, cursoTitulo) {
     txtCursoTitulo.innerText = `Curso: ${cursoTitulo}`;
     estadoIndex.innerText = "⏳ Extracting ...";
@@ -204,7 +197,7 @@ async function mapearTemarioCurso(courseId, cursoTitulo) {
 
 
 
-// Ensamblador y descargador de fragmentos de transmisión HLS (.ts)
+
 async function procesarDescargaHls(masterUrl, tituloVideo, boton) {
     try {
         const resMaster = await fetch(masterUrl);
@@ -282,15 +275,13 @@ async function procesarDescargaHls(masterUrl, tituloVideo, boton) {
     
 }
 
-// =========================================================================
-// ACCIÓN C: AUTOMATIZADOR SUPREMO (MARCAR -> CERTIFICADO -> DESMARCAR)
-// =========================================================================
-let cursoIdActivoGlobal = null; // Rastreará el ID del curso abierto para la automatización
 
-// Enlazamos de forma segura con tu función existente para capturar el ID del curso cuando se abre
+let cursoIdActivoGlobal = null; 
+
+
 const originalMapearTemarioCurso = mapearTemarioCurso;
 mapearTemarioCurso = async function(courseId, cursoTitulo) {
-    cursoIdActivoGlobal = courseId; // Guardamos el ID de forma global
+    cursoIdActivoGlobal = courseId; 
     return originalMapearTemarioCurso(courseId, cursoTitulo);
 };
 
@@ -321,7 +312,7 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
     };
 
     try {
-        // --- CONFIGURACIÓN E INDEXACIÓN INICIAL ---
+       
         txtStatus.innerHTML = "🔍 Analizando plan de estudios...";
         barraProgreso.style.width = "5%";
         
@@ -341,12 +332,10 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
         const totalElementos = lecciones.length + (evaluaciones.length * 2);
         let elementosProcesados = 0;
 
-        // ==========================================
-        // FASE 1: MARCAR TODO EL PROGRESO
-        // ==========================================
+      
         txtStatus.innerHTML = `📺 <b>Fase 1/3:</b> Iniciando marcado...`;
         
-        // 1.1 Videos y artículos
+       
         for (let i = 0; i < lecciones.length; i++) {
             await fetch(`https://www.udemy.com/api-2.0/users/me/subscribed-courses/${cursoIdActivoGlobal}/completed-lectures/`, {
                 method: "POST", headers: cabecerasBase, credentials: "include",
@@ -358,7 +347,7 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
             await new Promise(r => setTimeout(r, 250));
         }
 
-        // 1.2 Ejercicios Prácticos REST
+       
         for (let i = 0; i < evaluaciones.length; i++) {
             await fetch(`https://www.udemy.com/api-2.0/users/me/subscribed-courses/${cursoIdActivoGlobal}/quizzes/${evaluaciones[i].id}/user-attempted-quizzes/`, {
                 method: "POST", headers: cabecerasBase, credentials: "include",
@@ -370,7 +359,7 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
             await new Promise(r => setTimeout(r, 250));
         }
 
-        // 1.3 Cuestionarios GraphQL
+      
         for (let j = 0; j < evaluaciones.length; j++) {
             const cuerpoGraphQL = {
                 "query": "\n    mutation QuizMarkComplete($quizId: ID!) {\n  quizMarkComplete(quizId: $quizId)\n}\n    ",
@@ -385,12 +374,10 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
             await new Promise(r => setTimeout(r, 250));
         }
 
-        // ==========================================
-        // FASE 2: RECLAMAR Y ABRIR CERTIFICADO
-        // ==========================================
+    
         barraProgreso.style.width = "50%";
         txtStatus.innerHTML = "📡 <b>Fase 2/3:</b> Indexando certificado en los servidores...";
-        await new Promise(r => setTimeout(r, 2000)); // Espera prudencial de sincronización
+        await new Promise(r => setTimeout(r, 2000));
 
         const resCertificados = await fetch("https://www.udemy.com/api-2.0/users/me/certificates/?page_size=100", {
             method: "GET",
@@ -411,13 +398,11 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
 
         await new Promise(r => setTimeout(r, 1500));
 
-        // ==========================================
-        // FASE 3: DESMARCADO Y LIMPIEZA A 0%
-        // ==========================================
+    
         txtStatus.innerHTML = "🔄 <b>Fase 3/3:</b> Removiendo marcas para restaurar avance...";
         let elementosBorrados = 0;
 
-        // 3.1 Remover videos (DELETE)
+        
         for (let i = 0; i < lecciones.length; i++) {
             await fetch(`https://www.udemy.com/api-2.0/users/me/subscribed-courses/${cursoIdActivoGlobal}/completed-lectures/${lecciones[i].id}/`, {
                 method: "DELETE", headers: cabecerasBase, credentials: "include"
@@ -428,7 +413,7 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
             await new Promise(r => setTimeout(r, 250));
         }
 
-        // 3.2 Remover ejercicios y quizzes (POST false)
+       
         for (let i = 0; i < evaluaciones.length; i++) {
             await fetch(`https://www.udemy.com/api-2.0/users/me/subscribed-courses/${cursoIdActivoGlobal}/quizzes/${evaluaciones[i].id}/user-attempted-quizzes/`, {
                 method: "POST", headers: cabecerasBase, credentials: "include",
@@ -440,7 +425,7 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
             await new Promise(r => setTimeout(r, 250));
         }
 
-        // Fin de la ejecución exitosa
+      
         barraProgreso.style.width = "100%";
         txtStatus.innerHTML = "🏁 <b>¡Ciclo Completado!</b> Avance limpio a cero.";
         botonCiclo.innerText = "✓ Ejecutado Correctamente";
@@ -452,7 +437,7 @@ document.getElementById('btn-completar-ciclo').addEventListener('click', async (
         botonCiclo.innerText = "💥 Reintentar Ciclo";
         botonCiclo.style.background = "#e63946";
     } finally {
-        // Restaurar estado original del botón tras unos segundos
+       
         setTimeout(() => {
             botonCiclo.disabled = false;
             if(botonCiclo.style.background !== "rgb(230, 57, 70)") {
