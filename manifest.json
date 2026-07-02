@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Udemy Extractor Pro",
+  "version": "1.0",
+  "description": "Herramienta visual para indexar y descargar lecciones en alta calidad.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "windows"
+  ],
+  "host_permissions": [
+    "https://www.udemy.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {}
+}

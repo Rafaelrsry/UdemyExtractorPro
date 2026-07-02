@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Udemy Extractor Pro</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fa;
+      color: #1c1d1f;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .header {
+      background-color: #ffffff;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 2px solid #a435f0;
+      position: relative;
+      flex-shrink: 0;
+    }
+    h3 {
+      color: #a435f0;
+      margin: 0 0 5px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    p {
+      font-size: 11px;
+      color: #6a6f73;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .btn-regresar {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      background-color: #6a6f73;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none; /* Se activa dinámicamente */
+    }
+    .btn-regresar:hover {
+      background-color: #3e4143;
+    }
+    
+    /* Vistas */
+    .view {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+    .active-view {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Menú de Bienvenida */
+    .menu-container {
+      gap: 15px;
+      justify-content: center;
+      height: 100%;
+    }
+    .btn-main {
+      background-color: #a435f0;
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn-main:hover {
+      background-color: #8710d8;
+    }
+    .btn-secondary {
+      background-color: #2ec4b6;
+    }
+    .btn-secondary:hover {
+      background-color: #24a195;
+    }
+
+    /* Grid de Cursos */
+    .grid-cursos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .card-curso {
+      background: #ffffff;
+      border: 1px solid #d1d7dc;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card-curso:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    /* Lista de Clases */
+    .info-curso-activo {
+      margin-bottom: 12px;
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #e8eaec;
+    }
+    .lista-videos {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .item-video {
+      padding: 10px;
+      border: 1px solid #e8eaec;
+      border-radius: 8px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-bajar {
+      background: #a435f0;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+      min-width: 75px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <button id="btn-regresar-menu" class="btn-regresar">← Back</button>
+    <h3 id="app-titulo">📥 Extractor Udemy HQ</h3>
+    <p id="app-subtitulo">By R.R.R</p>
+  </div>
+  
+  <div id="view-menu" class="view active-view menu-container">
+    <button id="btn-galeria" class="btn-main"> Purchased Courses</button>
+    <button id="btn-pagina" class="btn-main btn-secondary">   Courses Purchased with a Subscription / Current Course</button>
+  </div>
+
+  <div id="view-galeria" class="view">
+    <div id="grid-cursos" class="grid-cursos"></div>
+  </div>
+
+<div id="view-clases" class="view">
+    <div class="info-curso-activo">
+      <p style="font-size: 12px; color: #1c1d1f; font-weight: bold; margin-bottom: 4px;" id="txt-curso-titulo">Curso: Seleccionando...</p>
+      <div id="estado-index" style="font-size: 11px; color: #a435f0; font-weight: bold; margin-bottom: 8px;">⏳ Extrayendo datos de la API...</div>
+      
+      <div id="panel-automatizador" style="border-top: 1px dashed #d1d7dc; padding-top: 8px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+        <button id="btn-completar-ciclo" style="width: 100%; background: #2ec4b6; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s;">
+          🚀 Get a Certificate ! 
+        </button>
+        <div id="progreso-automatizador" style="font-size: 11px; color: #6a6f73; line-height: 1.3; font-weight: 500; display: none;">
+          <span id="txt-fase-status">Stage: Preparing...</span>
+          <div style="width: 100%; background: #e8eaec; height: 6px; border-radius: 3px; margin-top: 4px; overflow: hidden;">
+            <div id="barra-fase-progreso" style="width: 0%; background: #a435f0; height: 100%; transition: width 0.1s ease;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="lista-videos-descarga" class="lista-videos"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
